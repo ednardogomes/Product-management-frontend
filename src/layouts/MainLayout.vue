@@ -12,7 +12,7 @@ const isActive = (routeName: string) => {
 
 <template>
   <q-layout view="hHh Lpr lff">
-    <q-header elevated :class="$q.dark.isActive ? 'bg-secondary' : 'bg-black'">
+    <q-header elevated >
       <q-toolbar>
         <q-toolbar-title>Amazon</q-toolbar-title>
       </q-toolbar>
@@ -24,7 +24,7 @@ const isActive = (routeName: string) => {
       :width="200"
       :breakpoint="500"
       bordered
-      :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'"
+      class="bg-grey-2"
     >
       <q-scroll-area class="fit">
         <q-list>
@@ -55,7 +55,7 @@ const isActive = (routeName: string) => {
     </q-drawer>
 
     <q-page-container>
-      <q-page padding>
+      <q-page>
         <router-view></router-view>
       </q-page>
     </q-page-container>

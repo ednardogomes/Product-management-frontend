@@ -6,7 +6,7 @@ interface User {
   email: string;
 }
 
-export const UseUserStore = defineStore('useUserStore', {
+export const useUserStore = defineStore('user', {
   state: () => ({
     user: null as User | null,
     token: null as string | null,

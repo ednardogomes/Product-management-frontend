@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { api } from 'src/boot/axios';
-import { UseUserStore } from 'src/stores/userUserStore';
+import { useUserStore } from 'src/stores/user-store';
 import { ref } from 'vue';
 
 defineOptions({
@@ -11,7 +11,6 @@ const emit = defineEmits<{
   'update:changeRender': ['login' | 'register'];
 }>();
 
-const useUserStore = UseUserStore();
 
 const email = ref<string>('');
 const password = ref<string>('');
@@ -28,7 +27,7 @@ async function login() {
   }
 
   localStorage.setItem('AuthToken', response.data.token);
-  useUserStore.setToken(response.data.token);
+  useUserStore().setToken(response.data.token);
 
   return 'Login Realizado com sucesso.!';
 }
