@@ -12,7 +12,7 @@ const isActive = (routeName: string) => {
 
 <template>
   <q-layout view="hHh Lpr lff">
-    <q-header elevated >
+    <q-header elevated>
       <q-toolbar>
         <q-toolbar-title>Amazon</q-toolbar-title>
       </q-toolbar>

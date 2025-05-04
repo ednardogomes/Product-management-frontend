@@ -11,7 +11,6 @@ const emit = defineEmits<{
   'update:changeRender': ['login' | 'register'];
 }>();
 
-
 const email = ref<string>('');
 const password = ref<string>('');
 

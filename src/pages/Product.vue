@@ -4,6 +4,7 @@ import { onMounted, reactive, ref } from 'vue';
 import TitlePage from 'src/components/shared/TitlePage.vue';
 import { useProductStore } from 'src/stores/product-store';
 import { storeToRefs } from 'pinia';
+import FormProduct from 'src/components/forms/FormProduct.vue';
 
 interface QuasarTable {
   name: string;
@@ -18,8 +19,9 @@ interface QuasarTable {
   classes?: string;
 }
 
-const {loadingProduct, listProducts} = storeToRefs(useProductStore())
-const filterProduct = ref<string>('')
+const { loadingProduct, listProducts } = storeToRefs(useProductStore());
+const filterProduct = ref<string>('');
+const showFormProduct = ref<boolean>(false);
 const columnsProducts = reactive<QuasarTable[]>([
   {
     name: 'name',
@@ -47,10 +49,16 @@ const columnsProducts = reactive<QuasarTable[]>([
   },
 ]);
 
-onMounted(async () => {
-  await useProductStore().getProducts()
-})
+const openFormProduct = () => {
+  showFormProduct.value = true;
+};
+const closeFormProduct = () => {
+  showFormProduct.value = false;
+};
 
+onMounted(async () => {
+  await useProductStore().getProducts();
+});
 </script>
 <template>
   <section>
@@ -64,25 +72,19 @@ onMounted(async () => {
       <div :class="!$q.screen.lt.sm ? 'col-5' : 'col-12'">
         <TitlePage title="Gerenciamento de categorias" />
       </div>
-      <div
-        class="col-6 row items-center justify-end "
-        :class="!$q.screen.lt.sm ? '' : 'q-mb-sm'"
-      >
+      <div class="col-6 row items-center justify-end" :class="!$q.screen.lt.sm ? '' : 'q-mb-sm'">
         <q-btn
           icon-right="add"
           label="Produto"
           class="q-mr-lg bg-contabilidade"
           unelevated
           color="primary"
+          @click="openFormProduct"
         />
       </div>
     </header>
-    <q-scroll-area class="main-scroll"
-    >
-      <main
-        class="q-pa-sm q-mb-md"
-        :style="!$q.screen.lt.sm ? '' : 'width: 98vw'"
-      >
+    <q-scroll-area class="main-scroll">
+      <main class="q-pa-sm q-mb-md" :style="!$q.screen.lt.sm ? '' : 'width: 98vw'">
         <q-table
           :rows="listProducts"
           :columns="columnsProducts"
@@ -97,12 +99,10 @@ onMounted(async () => {
           :rows-per-page-options="[20]"
         >
           <template v-slot:top>
-            <div
-              :class="!$q.screen.lt.md ? 'row full-width' : 'column full-width'"
-            >
+            <div :class="!$q.screen.lt.md ? 'row full-width' : 'column full-width'">
               <span class="text-subtitle2">Lista de produtos</span>
               <q-space />
-              <div  class="row">
+              <div class="row">
                 <q-input
                   filled
                   v-model="filterProduct"
@@ -118,58 +118,28 @@ onMounted(async () => {
             </div>
           </template>
           <template v-slot:body="props">
-            <q-tr
-              :props="props"
-              style="height: 28px"
-            >
-              <q-td
-                key="name"
-                :props="props"
-                class="text-left"
-              >
-                <span >{{ props.row.name }}</span>
+            <q-tr :props="props" style="height: 28px">
+              <q-td key="name" :props="props" class="text-left">
+                <span>{{ props.row.name }}</span>
               </q-td>
-              <q-td
-                key="price"
-                :props="props"
-                class="text-left"
-              >
-                <span >R$ {{ props.row.price }}</span>
+              <q-td key="price" :props="props" class="text-left">
+                <span>R$ {{ props.row.price }}</span>
               </q-td>
-              <q-td
-                key="category"
-                :props="props"
-                class="text-left"
-              >
-                <span >{{ props.row.category }}</span>
+              <q-td key="category" :props="props" class="text-left">
+                <span>{{ props.row.category }}</span>
               </q-td>
-              <q-td
-                key="description"
-                :props="props"
-                class="text-left"
-              >
-                <span >{{ props.row.description }}</span>
+              <q-td key="description" :props="props" class="text-left">
+                <span>{{ props.row.description }}</span>
               </q-td>
               <q-td key="action" :props="props">
-                <q-btn
-                  size="sm"
-                  flat
-                  round
-                  color="black"
-                  icon="edit"
-                />
-                <q-btn
-                  size="sm"
-                  flat
-                  round
-                  color="negative"
-                  icon="delete"
-                />
+                <q-btn size="sm" flat round color="black" icon="edit" />
+                <q-btn size="sm" flat round color="negative" icon="delete" />
               </q-td>
             </q-tr>
           </template>
         </q-table>
       </main>
     </q-scroll-area>
+    <FormProduct :open="showFormProduct" @update:change-open="closeFormProduct" />
   </section>
 </template>
