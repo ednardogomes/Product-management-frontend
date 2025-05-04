@@ -1,30 +1,22 @@
 import type { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
-  // {
-  //   path: '/',
-  //   component: () => import('pages/InitialPage.vue'),
-  // },
-
   {
     path: '/',
+    name: 'auth',
     component: () => import('pages/AuthPage.vue'),
+  },
+  {
+    path: '/admin',
+    component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('components/LoginForm.vue') },
-      { path: '', component: () => import('components/RegisterForm.vue') },
+      { path: '', redirect: { name: 'admin-product' } },
+      { path: 'product', name: 'admin-product', component: () => import('src/pages/Product.vue') },
     ],
   },
-
-  {
-    path: '/user',
-    component: () => import('layouts/UserLayout.vue'),
-  },
-
-  // Always leave this as last one,
-  // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue'),
+    component: () => import('pages/error/ErrorNotFound.vue'),
   },
 ];
 

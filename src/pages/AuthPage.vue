@@ -1,14 +1,22 @@
-<template>
-  <div v-if="true">
-    <Login />
-  </div>
-
-  <div v-if="false">
-    <Register />
-  </div>
-</template>
-
 <script setup lang="ts">
-import Login from 'src/components/LoginForm.vue';
-import Register from 'src/components/RegisterForm.vue';
+import LoginForm from 'src/components/forms/LoginForm.vue';
+import RegisterForm from 'src/components/forms/RegisterForm.vue';
+import { ref } from 'vue';
+
+defineOptions({
+  name: 'AuthPage',
+});
+
+const render = ref<'login' | 'register'>('login');
+
+const handleChangeRender = (value: 'login' | 'register') => {
+  render.value = value;
+};
 </script>
+
+<template>
+  <main>
+    <LoginForm v-if="render == 'login'" @update:change-render="handleChangeRender" />
+    <RegisterForm v-else @update:change-render="handleChangeRender" />
+  </main>
+</template>
