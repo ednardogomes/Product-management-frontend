@@ -16,7 +16,7 @@ const useUserStore = UseUserStore();
 const email = ref<string>('');
 const password = ref<string>('');
 
-async function login(e: Event) {
+async function login() {
   const userData = {
     email: email.value,
     password: password.value,
