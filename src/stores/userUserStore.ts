@@ -6,15 +6,10 @@ interface User {
   email: string;
 }
 
-interface UserStore {
-  user: User | null;
-  token: string | null;
-}
-
 export const UseUserStore = defineStore('useUserStore', {
   state: () => ({
-    user: null,
-    token: null,
+    user: null as User | null,
+    token: null as string | null,
   }),
   getters: {
     isAuthenticated: (state): boolean => !!state.token,

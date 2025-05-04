@@ -1,5 +1,5 @@
 <script lang="ts"></script>
 
 <template>
-  <main>Produtos</main>
+  <main>Usuários</main>
 </template>
