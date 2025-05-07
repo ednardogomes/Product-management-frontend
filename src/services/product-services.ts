@@ -3,7 +3,7 @@ import { api } from 'src/boot/axios';
 const baseUrl = 'product';
 
 interface Product {
-  id: string;
+  id: string | number;
   name: string;
   price: number;
   description: string | null;
@@ -29,6 +29,25 @@ export const createProductService = (
   };
 }> => {
   return api.post(`${baseUrl}/`, {
+    name,
+    price,
+    description,
+  });
+};
+
+export const updateProductService = (
+  id: string | number,
+  name: string,
+  price: number,
+  description: string | null,
+): Promise<{
+  status: number;
+  data: {
+    products: Product[];
+    message: string;
+  };
+}> => {
+  return api.put(`${baseUrl}/${id}`, {
     name,
     price,
     description,

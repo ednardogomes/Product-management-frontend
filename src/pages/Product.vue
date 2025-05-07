@@ -5,6 +5,11 @@ import TitlePage from 'src/components/shared/TitlePage.vue';
 import { useProductStore } from 'src/stores/product-store';
 import { storeToRefs } from 'pinia';
 import FormProduct from 'src/components/forms/FormProduct.vue';
+// import UpdateFormProduct from 'src/components/forms/UpdateFormProduct.vue';
+
+defineOptions({
+  name: 'Product',
+});
 
 interface QuasarTable {
   name: string;
@@ -19,9 +24,18 @@ interface QuasarTable {
   classes?: string;
 }
 
+interface Product {
+  id?: string | number;
+  name: string;
+  price: number;
+  description: string | null;
+}
+
 const { loadingProduct, listProducts } = storeToRefs(useProductStore());
 const filterProduct = ref<string>('');
+const selectedProduct = ref<Product | ''>('');
 const showFormProduct = ref<boolean>(false);
+// const showFormUpdate = ref<boolean>(false);
 const columnsProducts = reactive<QuasarTable[]>([
   {
     name: 'name',
@@ -30,15 +44,15 @@ const columnsProducts = reactive<QuasarTable[]>([
     align: 'left',
   },
   {
-    name: 'description',
-    label: 'Descrição',
-    field: 'description',
-    align: 'left',
-  },
-  {
     name: 'price',
     label: 'Preço',
     field: 'price',
+    align: 'left',
+  },
+  {
+    name: 'description',
+    label: 'Descrição',
+    field: 'description',
     align: 'left',
   },
   {
@@ -54,6 +68,11 @@ const openFormProduct = () => {
 };
 const closeFormProduct = () => {
   showFormProduct.value = false;
+};
+
+const openEditForm = (product: Product) => {
+  selectedProduct.value = product;
+  showFormProduct.value = true;
 };
 
 onMounted(async () => {
@@ -132,7 +151,14 @@ onMounted(async () => {
                 <span>{{ props.row.description }}</span>
               </q-td>
               <q-td key="action" :props="props">
-                <q-btn size="sm" flat round color="black" icon="edit" />
+                <q-btn
+                  @click="openEditForm(props.row)"
+                  size="sm"
+                  flat
+                  round
+                  color="black"
+                  icon="edit"
+                />
                 <q-btn size="sm" flat round color="negative" icon="delete" />
               </q-td>
             </q-tr>
@@ -140,6 +166,10 @@ onMounted(async () => {
         </q-table>
       </main>
     </q-scroll-area>
-    <FormProduct :open="showFormProduct" @update:change-open="closeFormProduct" />
+    <FormProduct
+      :open="showFormProduct"
+      :product="selectedProduct"
+      @update:change-open="closeFormProduct"
+    />
   </section>
 </template>
