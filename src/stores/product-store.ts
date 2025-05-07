@@ -2,12 +2,13 @@ import { defineStore } from 'pinia';
 import { Notify } from 'quasar';
 import {
   createProductService,
+  deleteProductService,
   getProductsService,
   updateProductService,
 } from 'src/services/product-services';
 
 interface Product {
-  id: string | number;
+  id: number;
   name: string;
   price: number;
   description: string | null;
@@ -56,12 +57,7 @@ export const useProductStore = defineStore('store', {
       }
     },
 
-    async updateProduct(
-      id: string | number,
-      name: string,
-      price: number,
-      description: string | null,
-    ) {
+    async updateProduct(id: number, name: string, price: number, description: string | null) {
       try {
         this.loadingProduct = true;
         const response = await updateProductService(id, name, price, description);
@@ -70,9 +66,30 @@ export const useProductStore = defineStore('store', {
           this.listProducts = response.data.products;
           Notify.create({
             message: response.data.message,
-            type: 'Atualizado com sucesso',
+            type: 'success',
           });
         }
+        return response;
+      } catch (error) {
+        console.error(error);
+        return null;
+      } finally {
+        this.loadingProduct = false;
+      }
+    },
+
+    async deleteProduct(id: number) {
+      try {
+        this.loadingProduct = true;
+        const response = await deleteProductService(id);
+        if (response.status == 200) {
+          this.listProducts = this.listProducts.filter((item) => item.id != id);
+          Notify.create({
+            message: response.data.message,
+            type: 'sucess',
+          });
+        }
+
         return response;
       } catch (error) {
         console.error(error);

@@ -9,9 +9,16 @@ defineOptions({
   name: 'FormProduct',
 });
 
+interface Product {
+  id?: number;
+  name: string;
+  price: number;
+  description: string | null;
+}
+
 const props = defineProps<{
   open: boolean;
-  product: string | object | number;
+  product: null | Product;
 }>();
 const emit = defineEmits<{
   'update:changeOpen': [void];
@@ -19,21 +26,24 @@ const emit = defineEmits<{
 
 const { loadingProduct } = storeToRefs(useProductStore());
 
-const form = reactive({
-  isOpen: props.open,
-  productData: props.product,
-});
-
 const dataProduct = reactive({
-  id: '' as string | number,
   name: '' as string,
-  price: '' as string | number,
+  price: '' as string,
   description: '' as string,
 });
 
+const checkEdit = () => {
+  if (props.product) {
+    Object.assign(dataProduct, {
+      name: props.product.name,
+      price: String(props.product.price),
+      description: props.product.description ?? '',
+    });
+  }
+};
+
 const clear = () => {
   Object.assign(dataProduct, {
-    id: '',
     name: '',
     price: '',
     description: '',
@@ -51,18 +61,17 @@ const save = async () => {
   }
 };
 
-const update = () => {
-  console.log(props.product);
-  // const response = await useProductStore().updateProduct(
-  //   props.product
-  //   dataProduct.name,
-  //   Number(dataProduct.price),
-  //   dataProduct.description.trim() !== '' ? dataProduct.description : null,
-  // );
-  // console.log(dataProduct);
-  // if (response?.status == 201) {
-  //   emit('update:changeOpen');
-  // }
+const update = async () => {
+  const response = await useProductStore().updateProduct(
+    props.product?.id ?? 0,
+    dataProduct.name,
+    Number(dataProduct.price),
+    dataProduct.description.trim() !== '' ? dataProduct.description : null,
+  );
+
+  if (response?.status == 200) {
+    emit('update:changeOpen');
+  }
 };
 
 const open = computed({
@@ -73,22 +82,19 @@ const open = computed({
 watch(open, () => {
   if (open.value) {
     clear();
+    checkEdit();
   }
 });
-
-watch(
-  () => props.product,
-  (newValue) => {
-    form.productData = newValue;
-  },
-);
 </script>
 
 <template>
   <q-dialog v-model="open" class="q-pa-md">
     <q-card class="bg-grey-2" style="min-width: 700px">
       <q-card-section class="q-pa-none q-py-sm">
-        <TitlePage title="Crie ou atualize seu produto" class="bg-grey-2" />
+        <TitlePage
+          :title="props.product ? 'Atualize seu produto' : 'Crie seu produto'"
+          class="bg-grey-2"
+        />
       </q-card-section>
       <q-card-section class="q-pa-sm q-gutter-y-sm">
         <q-form class="q-gutter-y-sm">
@@ -100,7 +106,7 @@ watch(
               label="Preço do produto*"
               clearable
               dense
-              mask="#####"
+              mask="####.##"
             />
             <q-input
               filled
@@ -123,6 +129,7 @@ watch(
           flat
         />
         <q-btn
+          v-if="props.product === null"
           label="Salvar"
           color="primary"
           class="q-ml-sm"
@@ -132,6 +139,7 @@ watch(
           @click="save"
         />
         <q-btn
+          v-else
           label="Atualizar"
           color="primary"
           class="q-ml-sm"

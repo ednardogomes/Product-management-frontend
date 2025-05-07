@@ -25,7 +25,7 @@ interface QuasarTable {
 }
 
 interface Product {
-  id?: string | number;
+  id?: number;
   name: string;
   price: number;
   description: string | null;
@@ -33,7 +33,7 @@ interface Product {
 
 const { loadingProduct, listProducts } = storeToRefs(useProductStore());
 const filterProduct = ref<string>('');
-const selectedProduct = ref<Product | ''>('');
+const selectedProduct = ref<Product | null>(null);
 const showFormProduct = ref<boolean>(false);
 // const showFormUpdate = ref<boolean>(false);
 const columnsProducts = reactive<QuasarTable[]>([
@@ -66,13 +66,15 @@ const columnsProducts = reactive<QuasarTable[]>([
 const openFormProduct = () => {
   showFormProduct.value = true;
 };
-const closeFormProduct = () => {
-  showFormProduct.value = false;
-};
 
-const openEditForm = (product: Product) => {
+const openUpdateFormProduc = (product: Product) => {
   selectedProduct.value = product;
   showFormProduct.value = true;
+};
+
+const closeFormProduct = () => {
+  showFormProduct.value = false;
+  selectedProduct.value = null;
 };
 
 onMounted(async () => {
@@ -152,14 +154,21 @@ onMounted(async () => {
               </q-td>
               <q-td key="action" :props="props">
                 <q-btn
-                  @click="openEditForm(props.row)"
+                  @click="openUpdateFormProduc(props.row)"
                   size="sm"
                   flat
                   round
                   color="black"
                   icon="edit"
                 />
-                <q-btn size="sm" flat round color="negative" icon="delete" />
+                <q-btn
+                  @click="useProductStore().deleteProduct(props.row.id)"
+                  size="sm"
+                  flat
+                  round
+                  color="negative"
+                  icon="delete"
+                />
               </q-td>
             </q-tr>
           </template>
